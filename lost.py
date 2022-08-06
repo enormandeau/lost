@@ -10,6 +10,7 @@ Where outside_function_name in:
 """
 
 # Modules
+from random import sample
 from collections import defaultdict
 from lib.util import *
 from math import sqrt
@@ -38,8 +39,21 @@ class Maze(object):
             for x in range(xn * 2 + 1):
                 ascii_maze[-1].append("#")
 
-        # Represent cells
         for c in self.cells:
+            # Add neighbours
+            x = self.cells[c].x
+            y = self.cells[c].y
+
+            if (x-1, y) in self.cells:
+                self.cells[c].neighbours.add((x-1, y))
+            if (x+1, y) in self.cells:
+                self.cells[c].neighbours.add((x+1, y))
+            if (x, y-1) in self.cells:
+                self.cells[c].neighbours.add((x, y-1))
+            if (x, y+1) in self.cells:
+                self.cells[c].neighbours.add((x, y+1))
+
+            # ascii representation
             cx = self.cells[c].x * 2 + 1
             cy = self.cells[c].y + 1
 
@@ -57,10 +71,13 @@ class Cell(object):
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.adj = set()
+        self.neighbours = set()
+
+    def has_available_neighbours(self):
+        pass
 
     def __repr__(self):
-        return(f"cell: {self.x, self.y}")
+        return(f"cell: {self.x, self.y}\n  " + str(self.neighbours))
 
 # Functions
 def is_outside_rect(x, y, xn, yn):
@@ -96,3 +113,6 @@ else:
 maze = Maze(is_outside_function, xn, yn)
 
 print(maze)
+
+s = sample(maze.cells.keys(), 1)[0]
+print(s)
