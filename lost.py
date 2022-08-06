@@ -43,14 +43,10 @@ class Maze(object):
             cx = self.cells[c].x * 2 + 1
             cy = self.cells[c].y + 1
 
-            #print(c, cx, cy)
-
             ascii_maze[cy - 1][cx] = "_"
             ascii_maze[cy][cx] = "_"
             ascii_maze[cy][cx - 1] = "|"
             ascii_maze[cy][cx + 1] = "|"
-
-            #print("\n".join(["".join(line) for line in ascii_maze]))
 
         return ["".join(line).replace("#", " ") for line in ascii_maze]
 
