@@ -20,7 +20,7 @@ import sys
 
 # Classes
 class Maze(object):
-    def __init__(self, outside_function, xn, yn):
+    def __init__(self, shape, xn, yn):
         self.cells = dict()
         self.xn = xn
         self.yn = yn
@@ -28,7 +28,7 @@ class Maze(object):
 
         for x in range(xn):
             for y in range(yn):
-                if not outside_function(x, y, self.xn, self.yn):
+                if not shape(x, y, self.xn, self.yn):
                     self.cells[(x, y)] = Cell(x, y)
 
         self.ascii = self.create_printable_area()
@@ -126,7 +126,7 @@ class Maze(object):
 
             # Display progress
             #print(self, flush=True)
-            #sleep(0.02)
+            #sleep(0.05)
 
             # Connect them and remove wall between them
             self.connect_cells(s, current)
@@ -151,14 +151,23 @@ class Cell(object):
         return(f"cell: {self.x, self.y}\n  " + str(self.neighbours))
 
 # Functions
-def is_outside_rect(x, y, xn, yn):
+def shape_rect(x, y, xn, yn):
     return (x < 0) or (x>= xn) or (y < 0) or (y >= yn)
 
-def is_outside_circle(x, y, xn, yn):
+def shape_circle(x, y, xn, yn):
     cx = xn // 2
     cy = yn // 2
 
     return sqrt((x - cx)**2 + (y - cy)**2) >= min([cx, cy])
+
+def shape_donut(x, y, xn, yn):
+    cx = xn // 2
+    cy = yn // 2
+
+    return (sqrt((x - cx)**2 + (y - cy)**2) >= min([cx, cy])) or (sqrt((x - cx)**2 + (y - cy)**2) <= min([cx, cy]) / 2.2)
+
+def shape_triangle(x, y, xn, yn):
+    return (x + y < xn) or (x - y > 0)
 
 # Parsing user input
 try:
@@ -171,10 +180,16 @@ except:
 
 # Choose wanted outside function
 if shape_name.lower() in ["c", "circ", "circle"]:
-    shape = is_outside_circle
+    shape = shape_circle
 
 elif shape_name.lower() in ["r", "rect", "rectangle"]:
-    shape = is_outside_rect
+    shape = shape_rect
+
+elif shape_name.lower() in ["d", "don", "donut"]:
+    shape = shape_donut
+
+elif shape_name.lower() in ["t", "tri", "triangle"]:
+    shape = shape_triangle
 
 else:
     print(__doc__)
