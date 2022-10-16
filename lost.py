@@ -169,6 +169,9 @@ def shape_donut(x, y, xn, yn):
 def shape_triangle(x, y, xn, yn):
     return (x + y < xn) or (x - y > 0)
 
+def shape_diamond(x, y, xn, yn):
+    return (x + y <= xn/2) or (x - y >= xn/2) or (x + y >= 1.5*xn) or (y - x >= xn)
+
 # Parsing user input
 try:
     xn = int(sys.argv[1])
@@ -190,11 +193,23 @@ elif shape_name.lower() in ["d", "don", "donut"]:
 
 elif shape_name.lower() in ["t", "tri", "triangle"]:
     shape = shape_triangle
+    if yn > xn:
+        xn = yn
+    else:
+        yn = xn
+
+elif shape_name.lower() in ["diam", "diamond"]:
+    shape = shape_diamond
+    if yn > xn:
+        xn = yn
+    else:
+        yn = xn
 
 else:
     print(__doc__)
     sys.exit(1)
 
-# Generate maze area. Cells have no neighbours
+# Generate maze
 maze = Maze(shape, xn, yn)
+
 print(maze)
